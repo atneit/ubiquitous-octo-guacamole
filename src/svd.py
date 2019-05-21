@@ -48,7 +48,7 @@ def computeSVD(A, k, computeU=False, rCond=1e-9):
     :returns: SVD object
     """
 
-    sm = sc.parallelize(A.toarray())
+    sm = sc.parallelize(A.toarray(), numSlices=100000)
     row_matrix = RowMatrix(sm)
 
     java_model = row_matrix._java_matrix_wrapper.call("computeSVD", int(k), computeU, float(rCond))
