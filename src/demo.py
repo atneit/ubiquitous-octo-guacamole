@@ -1,13 +1,10 @@
-# easy way to install pyspark, no need for big configuration
-import findspark
-findspark.init()
-
 import svd #import the code
-
-import scipy.io #only for loading the matlab matrix here
+import scipy.io  #only for loading the matlab matrix here
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 # Test matrix from AMOS code
-matfile = scipy.io.loadmat('shallow_water1.mat')
+matfile = scipy.io.loadmat('stokes64s.mat')
 
 print(repr(matfile.keys()))
 

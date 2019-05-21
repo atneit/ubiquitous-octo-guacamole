@@ -1,6 +1,11 @@
 import pyspark
 from pyspark.sql import SQLContext
 sc = pyspark.SparkContext()
+conf = pyspark.SparkConf()
+conf.set("spark.executor.memory", '20g')
+conf.set('spark.executor.cores', '1')
+conf.set('spark.cores.max', '1')
+conf.set("spark.driver.memory", '20g')
 
 from pyspark.mllib.common import callMLlibFunc, JavaModelWrapper
 from pyspark.mllib.linalg.distributed import RowMatrix
