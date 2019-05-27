@@ -1,9 +1,13 @@
-import svd #import the code
+import svd  #import the code
+import qr  #import the code
 import scipy.io  #only for loading the matlab matrix here
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-mat = "C"
+func = svd.computeSVD
+#func = qr.computeQR
+
+mat = "A"
 
 if mat is "A":
     A = scipy.sparse.csr_matrix(scipy.io.loadmat('IEEERTS96Adjacency.mat')['A'])
@@ -11,7 +15,7 @@ if mat is "A":
     print(repr(A.shape))
 
     # Once the RowMatrix is ready we can compute our Singular Value Decomposition
-    svd = svd.computeSVD(A, 2, True)
+    res = func(A)
 elif mat is "B":
     # Test matrix from AMOS code
     matfile = scipy.io.loadmat('stokes64s.mat') #12000 x 12000
@@ -23,7 +27,7 @@ elif mat is "B":
     print(repr(Prob.shape))
 
     # Once the RowMatrix is ready we can compute our Singular Value Decomposition
-    svd = svd.computeSVD(Prob,2,True)
+    res = func(Prob)
 elif mat is "C":
     # Test matrix from AMOS code
     matfile = scipy.io.loadmat('bcsstk13.mat') #2000 x 2000
@@ -35,7 +39,6 @@ elif mat is "C":
     print(repr(Prob.shape))
 
     # Once the RowMatrix is ready we can compute our Singular Value Decomposition
-    svd = svd.computeSVD(Prob,2,True)
-print svd.s
-print svd.U
-print svd.V
+    res = func(Prob)
+
+print(res)

@@ -1,11 +1,5 @@
 import pyspark
 from pyspark.sql import SQLContext
-sc = pyspark.SparkContext()
-conf = pyspark.SparkConf()
-conf.set("spark.executor.memory", '20g')
-conf.set('spark.executor.cores', '1')
-conf.set('spark.cores.max', '1')
-conf.set("spark.driver.memory", '20g')
 
 from pyspark.mllib.common import callMLlibFunc, JavaModelWrapper
 from pyspark.mllib.linalg.distributed import RowMatrix
@@ -35,7 +29,7 @@ class SVD(JavaModelWrapper):
         """ Returns a DenseMatrix whose columns are the right singular vectors of the SVD."""
         return self.call("V").toArray()
 
-def computeSVD(A, k, computeU=False, rCond=1e-9):
+def computeSVD(A, k=2, computeU=True, rCond=1e-9):
     """
     Computes the singular value decomposition of the RowMatrix.
     The given row matrix A of dimension (m X n) is decomposed into U * s * V'T where
@@ -48,8 +42,19 @@ def computeSVD(A, k, computeU=False, rCond=1e-9):
     :returns: SVD object
     """
 
-    sm = sc.parallelize(A.toarray(), numSlices=100000)
+    sc = pyspark.SparkContext()
+    conf = pyspark.SparkConf()
+    conf.set("spark.executor.memory", '20g')
+    conf.set('spark.executor.cores', '1')
+    conf.set('spark.cores.max', '1')
+    conf.set("spark.driver.memory", '20g')
+
+    sm = sc.parallelize(A.toarray(), numSlices=8)
     row_matrix = RowMatrix(sm)
 
     java_model = row_matrix._java_matrix_wrapper.call("computeSVD", int(k), computeU, float(rCond))
-    return SVD(java_model)
+    svd = SVD(java_model)
+    print svd.s
+    print svd.U
+    print svd.V
+    return svd
